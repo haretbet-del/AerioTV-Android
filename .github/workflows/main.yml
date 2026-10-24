@@ -22,7 +22,13 @@ jobs:
           echo -e "24333f1a63b6825ea9c5514f83c2829b004d1fee\n84831b9409646a918e30573bab4c9c91346d8abd\n504667f4c0de7af1a06de9f4b1727b84351f2910\n893a316ab96535af5455b3c2488e8433b86e7717\n7e4cd85db174ba45e50aabac1f174f440fb171cd\nbfe331aeb2534ed325e8622148646344bf39419c" > $HOME/android-sdk/licenses/android-sdk-license
           echo "sdk.dir=$HOME/android-sdk" > local.properties
 
-      - name: List Gradle Tasks
+      - name: Build with Gradle
         run: |
           chmod +x gradlew
-          ./gradlew tasks --all
+          ./gradlew build -x test --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: AerioTV-Ru-Categories
+          path: "**/build/outputs/apk/**/*.apk"
