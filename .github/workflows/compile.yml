@@ -28,10 +28,10 @@ jobs:
       - name: Build with Gradle
         run: |
           chmod +x gradlew
-          ./gradlew :app:assembleDebug --no-daemon
+          ./gradlew :app:assemble --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: AerioTV-Ru-Categories
-          path: app/build/outputs/apk/debug/*.apk
+          path: "**/build/outputs/apk/**/*.apk"
