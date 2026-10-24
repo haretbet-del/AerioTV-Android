@@ -18,7 +18,7 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Full Repair and Compile
+      - name: Full Repair and Diagnose Tasks
         run: |
           # 1. Восстанавливаем оригинальные файлы проекта
           git checkout origin/main -- .
@@ -28,17 +28,6 @@ jobs:
           echo -e "24333f1a63b6825ea9c5514f83c2829b004d1fee\n84831b9409646a918e30573bab4c9c91346d8abd" > $HOME/android-sdk/licenses/android-sdk-license
           echo "sdk.dir=$HOME/android-sdk" > local.properties
           
-          # 3. Делаем скрипт сборки исполняемым и запускаем его напрямую
-          if [ -f "./build.sh" ]; then
-            chmod +x ./build.sh
-            ./build.sh
-          elif [ -f "./gradlew" ]; then
-            chmod +x gradlew
-            ./gradlew :app:bundleRelease --no-daemon || ./gradlew compileDebugKotlin --no-daemon
-          fi
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: AerioTV-Ru-Categories
-          path: "**/build/outputs/apk/**/*.apk"
+          # 3. Выводим точный список всех команд сборки
+          chmod +x gradlew
+          ./gradlew tasks --all | grep assemble || ./gradlew tasks
