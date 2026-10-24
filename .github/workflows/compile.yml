@@ -18,21 +18,26 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Full Repair and Configure SDK
+      - name: Full Repair and Compile
         run: |
           git checkout origin/main -- .
           mkdir -p $HOME/android-sdk/licenses
           echo -e "24333f1a63b6825ea9c5514f83c2829b004d1fee\n84831b9409646a918e30573bab4c9c91346d8abd" > $HOME/android-sdk/licenses/android-sdk-license
           echo "sdk.dir=$HOME/android-sdk" > local.properties
-
-      - name: Build with Universal Command
-        run: |
-          chmod +x gradlew
-          # Запускаем сборку всех возможных APK конкретно внутри модуля :app
-          ./gradlew :app:assemble --no-daemon
+          
+          # Запускаем родной скрипт сборки автора, если он есть
+          if [ -f "./build.sh" ]; then
+            chmod +x ./build.sh
+            ./build.sh
+          else
+            chmod +x gradlew
+            ./gradlew :app:bundleDebug --no-daemon
+          fi
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: AerioTV-Ru-Categories
-          path: "**/build/outputs/apk/**/*.apk"
+          path: |
+            **/build/outputs/apk/**/*.apk
+            **/build/outputs/bundle/**/*.aab
