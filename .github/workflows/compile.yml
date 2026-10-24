@@ -25,7 +25,14 @@ jobs:
           echo -e "24333f1a63b6825ea9c5514f83c2829b004d1fee\n84831b9409646a918e30573bab4c9c91346d8abd" > $HOME/android-sdk/licenses/android-sdk-license
           echo "sdk.dir=$HOME/android-sdk" > local.properties
 
-      - name: Discover Real Project Structure
+      - name: Build with Universal Command
         run: |
           chmod +x gradlew
-          ./gradlew projects --no-daemon
+          # Запускаем сборку всех возможных вариантов APK для модуля :app
+          ./gradlew :app:build -x test --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: AerioTV-Ru-Categories
+          path: "**/build/outputs/apk/**/*.apk"
